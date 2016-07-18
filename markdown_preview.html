@@ -3,8 +3,11 @@
   <meta charset="utf-8"/>
   <title>vim-electrify-markdown-preview</title>
   <script src="marked.js"></script>
+  <script src="mermaid.js"></script>
+  <link rel="stylesheet" href="mermaid.css">
 </head>
 <body>
+    <div id="error"></div>
     <div id="content"></div>
     <script>
         var renderer = new marked.Renderer();
@@ -12,15 +15,22 @@
 
         renderer.code = function (code, language) {
             if(language === "mermaid") {
-                return "<div>Mermaid@</div>";
+                return "<div class='mermaid'>" + code + "</div>";
             } else {
                 return originalCodeRenderer.apply(this, arguments);
             }
         };
+    
+        mermaid.parseError = function(err, hash) {
+            document.getElementById("error").innerHTML = err;
+        };
+
         document.getElementById("content").innerHTML = marked("# Listening for changes...");
 
         require("electron").ipcRenderer.on("content-update", (event, message) => {
+            document.getElementById("error").innerHTML = "";
             document.getElementById("content").innerHTML = marked(message, { renderer: renderer });
+            mermaid.init();
         });
     </script>
 </body>
