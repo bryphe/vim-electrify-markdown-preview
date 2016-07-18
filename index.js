@@ -1,0 +1,1 @@
+vim.echo("Hello world!");
