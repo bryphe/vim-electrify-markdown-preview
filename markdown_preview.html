@@ -1,0 +1,27 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>vim-electrify-markdown-preview</title>
+  <script src="marked.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        var renderer = new marked.Renderer();
+        var originalCodeRenderer = renderer.code;
+
+        renderer.code = function (code, language) {
+            if(language === "mermaid") {
+                return "<div>Mermaid@</div>";
+            } else {
+                return originalCodeRenderer.apply(this, arguments);
+            }
+        };
+        document.getElementById("content").innerHTML = marked("# Listening for changes...");
+
+        require("electron").ipcRenderer.on("content-update", (event, message) => {
+            document.getElementById("content").innerHTML = marked(message, { renderer: renderer });
+        });
+    </script>
+</body>
+</html>
