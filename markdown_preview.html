@@ -5,10 +5,11 @@
   <script src="marked.js"></script>
   <script src="mermaid.js"></script>
   <link rel="stylesheet" href="mermaid.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/github-markdown-css/2.3.0/github-markdown.css">
 </head>
 <body>
     <div id="error"></div>
-    <div id="content"></div>
+    <div id="content" class="markdown-body"></div>
     <script>
         var renderer = new marked.Renderer();
         var originalCodeRenderer = renderer.code;

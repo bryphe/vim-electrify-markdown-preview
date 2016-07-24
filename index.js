@@ -1,14 +1,20 @@
 const {BrowserWindow} = require("electron").remote;
 
 var currentWindow = null;
+var lastContents = "";
+
 // This is a more advanced scenario - this uses an IPC channel
 // to send data from the plugin -> BrowserWindow
 vim.addCommand("MarkdownPreview", function(context) {
-    if(currentWindow)
+    if (currentWindow) {
+        currentWindow.focus();
         return;
+    }
 
-    currentWindow = new BrowserWindow({width: 800, height: 600, skipTaskbar: true, title: "vim-electrify-markdown-preview", autoHideMenuBar: true});
+    currentWindow = new BrowserWindow({width: 800, height: 600, title: "vim-electrify-markdown-preview"});
     currentWindow.loadURL(`file://${__dirname}/markdown_preview.html`);
+    currentWindow.focus();
+    currentWindow.webcontents.send("content-update", lastContents);
 
     currentWindow.on("close", () => {
         currentWindow = null;
@@ -24,6 +30,7 @@ vim.addCommand("MarkdownPreviewClose", (context) => {
 });
 
 vim.on("BufferChanged", (args) => {
+    lastContents = args.newContents;
 
     if(!currentWindow)
         return;
